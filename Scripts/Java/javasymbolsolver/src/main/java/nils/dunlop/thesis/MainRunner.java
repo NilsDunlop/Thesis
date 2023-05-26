@@ -7,10 +7,9 @@ import java.util.List;
 public class MainRunner {
 
     public static void main(String[] args) throws FileNotFoundException {
-        // Add file paths to be analyzed
+        // List of file paths to analyze
         List<String> filePaths = Arrays.asList(
-                "C:\\Users\\nilsd\\Desktop\\Thesis\\PMART\\3 - JRefactory v2.6.24\\src\\org\\acm\\seguin\\tools\\build\\CreateVersion.java",
-                "C:\\Users\\nilsd\\Desktop\\Thesis\\PMART\\3 - JRefactory v2.6.24\\src\\org\\acm\\seguin\\tools\\build\\CodeStoreBuilder.java"
+                "Example.java"
         );
         String rootPath = "C:\\Users\\nilsd\\Desktop\\Thesis\\PMART\\3 - JRefactory v2.6.24\\src";
 

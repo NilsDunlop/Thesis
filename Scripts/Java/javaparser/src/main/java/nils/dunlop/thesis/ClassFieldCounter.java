@@ -31,18 +31,21 @@ public class ClassFieldCounter {
     private void countClassFields(String filePath) throws IOException {
         CompilationUnit cu;
         try {
+            // Parse the Java file
             cu = new JavaParser().parse(Paths.get(filePath)).getResult().orElse(null);
         } catch (ParseProblemException e) {
             throw new IOException("Could not parse file: " + filePath, e);
         }
 
         if (cu != null) {
+            // Visit the compilation unit to count class fields
             cu.accept(new ClassVisitor(), null);
         } else {
             System.out.println("No content could be parsed from the file.");
         }
     }
 
+    // Visitor to traverse the AST and count class fields of the same type as the class
     private static class ClassVisitor extends VoidVisitorAdapter<Void> {
 
         @Override
@@ -50,11 +53,14 @@ public class ClassFieldCounter {
             super.visit(n, arg);
 
             AtomicInteger count = new AtomicInteger();
+
+            // Filter and process field declarations
             n.getMembers().stream()
                     .filter(member -> member instanceof FieldDeclaration)
                     .map(member -> (FieldDeclaration) member)
                     .forEach(field -> {
                         field.getVariables().forEach(variable -> {
+                            // Check if the field's type is the same as the class name
                             if (variable.getType().asString().equals(n.getNameAsString())) {
                                 count.getAndIncrement();
                                 System.out.println("Found field of class's own type in class " + n.getName()
@@ -62,6 +68,7 @@ public class ClassFieldCounter {
                             }
                         });
                     });
+
             System.out.println("Number of fields of own type in class " + n.getName() + ": " + count.get());
         }
     }

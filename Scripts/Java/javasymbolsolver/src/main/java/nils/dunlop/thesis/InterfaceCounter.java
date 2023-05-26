@@ -23,8 +23,11 @@ public class InterfaceCounter {
         SourceRoot sourceRoot = new SourceRoot(Paths.get(file.getParent()), config);
 
         try {
+            // Parse the Java file using Source Root
             CompilationUnit cu = sourceRoot.parse("", file.getName());
             InterfaceVisitor visitor = new InterfaceVisitor();
+
+            // Visit the CompilationUnit to count implemented interfaces
             visitor.visit(cu, null);
             System.out.println("Total interfaces found: " + visitor.getInterfaceCount());
         } catch (ParseProblemException e) {
@@ -42,8 +45,11 @@ public class InterfaceCounter {
 
         @Override
         public void visit(ClassOrInterfaceDeclaration classOrInterfaceDeclaration, Void arg) {
+            // Check if the declaration is not an interface
             if (!classOrInterfaceDeclaration.isInterface()) {
                 super.visit(classOrInterfaceDeclaration, arg);
+
+                // Iterate over implemented interfaces
                 for (ClassOrInterfaceType implementedInterface : classOrInterfaceDeclaration.getImplementedTypes()) {
                     interfaceCount++;
                     System.out.println(

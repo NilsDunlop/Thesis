@@ -21,9 +21,12 @@ public class PrivateConstructorCounter {
 
                 if (cu != null) {
                     AtomicInteger count = new AtomicInteger();
+
+                    // Find all constructor declarations in the compilation unit and filter for private constructors
                     cu.findAll(ConstructorDeclaration.class).stream()
                             .filter(c -> c.getModifiers().contains(Modifier.privateModifier()))
                             .forEach(c -> {
+                                // Increment the counter and print information about each private constructor
                                 count.getAndIncrement();
                                 String constructorName = c.getNameAsString();
                                 String constructorLocation = c.getBegin().map(Position::toString).orElse("unknown");
@@ -31,6 +34,7 @@ public class PrivateConstructorCounter {
                                 System.out.println("Private Constructor: " + constructorName +
                                         ", Location: " + constructorLocation);
                             });
+
                     System.out.println("Total private constructors: " + count);
                 } else {
                     System.err.println("Error parsing the source file: Could not obtain CompilationUnit.");

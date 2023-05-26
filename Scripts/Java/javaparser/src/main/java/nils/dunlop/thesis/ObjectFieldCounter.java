@@ -25,6 +25,7 @@ public class ObjectFieldCounter {
         }
     }
 
+    // Method to count the number of object fields in a Java file
     private static void countObjectFields(File javaFile) {
         JavaParser javaParser = new JavaParser();
         try {
@@ -34,11 +35,16 @@ public class ObjectFieldCounter {
                 CompilationUnit compilationUnit = parseResult.getResult().orElseThrow();
                 AtomicInteger count = new AtomicInteger();
 
+                // Traverse the compilation unit's AST nodes
                 compilationUnit.walk(node -> {
+                    // Check if the node represents a field declaration
                     if (node instanceof FieldDeclaration) {
                         FieldDeclaration fieldDeclaration = (FieldDeclaration) node;
+                        // Iterate over the variables in the field declaration
                         fieldDeclaration.getVariables().forEach(variableDeclarator -> {
+                            // Check if the variable's type is a reference type (object)
                             if (variableDeclarator.getType().isReferenceType()) {
+                                // Increment the counter and print information about the object field
                                 count.incrementAndGet();
                                 System.out.printf(
                                         "Object Field: %s, Node Type: %s, Location: %s%n",

@@ -30,20 +30,29 @@ public class OverrideCounter {
         File projectRoot = new File(rootPath);
 
         try {
+            // Create a CombinedTypeSolver and add the type solvers
             CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
             combinedTypeSolver.add(new ReflectionTypeSolver());
             combinedTypeSolver.add(new JavaParserTypeSolver(projectRoot));
 
+            // Create a ParserConfiguration and set the symbol resolver
             ParserConfiguration config = new ParserConfiguration();
             config.setSymbolResolver(new JavaSymbolSolver(combinedTypeSolver));
             JavaParser javaParser = new JavaParser(config);
 
+            // Parse the file and get the CompilationUnit
             CompilationUnit cu = javaParser.parse(file).getResult().orElseThrow(() -> new NoSuchElementException("No CompilationUnit found"));
+
+            // Initialize a set to store overridden methods
             Set<String> overriddenMethods = new HashSet<>();
+
+            // Find all ClassOrInterfaceDeclarations in the CompilationUnit
             List<ClassOrInterfaceDeclaration> classes = cu.findAll(ClassOrInterfaceDeclaration.class);
             for (ClassOrInterfaceDeclaration c : classes) {
+                // Get the methods of each class/interface
                 List<MethodDeclaration> methods = c.getMethods();
                 for (MethodDeclaration m : methods) {
+                    // Check if the method is overriding another method
                     if (isOverridingMethod(m.resolve())) {
                         String methodInfo = m.getNameAsString() + "(" + getMethodParameterTypes(m) + ")";
                         overriddenMethods.add(methodInfo);
@@ -96,7 +105,6 @@ public class OverrideCounter {
 
         return true;
     }
-
 
     private static String getMethodParameterTypes(MethodDeclaration method) {
         List<Parameter> parameters = method.getParameters();

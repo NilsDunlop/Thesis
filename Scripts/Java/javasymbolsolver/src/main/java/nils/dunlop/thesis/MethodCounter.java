@@ -17,9 +17,16 @@ public class MethodCounter {
         }
 
         try {
+            // Create a JavaParser instance
             JavaParser javaParser = new JavaParser();
+
+            // Parse the source file
             CompilationUnit cu = javaParser.parse(sourceFile).getResult().orElseThrow(() -> new ParseException("Failed to parse the source file."));
+
+            // Create a MethodVisitor instance
             MethodVisitor methodVisitor = new MethodVisitor();
+
+            // Visit the compilation unit to count methods
             methodVisitor.visit(cu, null);
 
             System.out.println("Total methods found: " + methodVisitor.getMethodCount());
@@ -34,7 +41,11 @@ public class MethodCounter {
         @Override
         public void visit(MethodDeclaration n, Void arg) {
             super.visit(n, arg);
+
+            // Increment the method count
             methodCount++;
+
+            // Print information about the method
             System.out.println("Method: " + n.getName() + " | " + "Node type: " + n.getClass().getSimpleName() + " | " + "Location: " + n.getRange().map(Object::toString).orElse("Unknown"));
         }
 
@@ -43,4 +54,3 @@ public class MethodCounter {
         }
     }
 }
-

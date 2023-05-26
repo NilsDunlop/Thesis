@@ -36,14 +36,21 @@ public class StaticFieldCounter {
 
     private static void printStaticFields(Path sourceFilePath) throws IOException {
         ParserConfiguration configuration = new ParserConfiguration();
+
+        // Create a SourceRoot instance to parse the source file
         SourceRoot sourceRoot = new SourceRoot(sourceFilePath.getParent(), configuration);
+
+        // Parse the source file and obtain the CompilationUnit
         CompilationUnit compilationUnit = sourceRoot.parse("", sourceFilePath.getFileName().toString());
 
         AtomicInteger count = new AtomicInteger();
+
+        // Find all field declarations in the compilation unit and filter for static fields
         compilationUnit.findAll(FieldDeclaration.class)
                 .stream()
                 .filter(field -> field.getModifiers().contains(Modifier.staticModifier()))
                 .forEach(field -> {
+                    // Increment the counter and print information about each static field
                     count.getAndIncrement();
                     String fieldName = field.getVariable(0).getNameAsString();
                     String fieldType = field.getElementType().toString();
@@ -53,6 +60,7 @@ public class StaticFieldCounter {
                             ", Type: " + fieldType +
                             ", Location: " + fieldLocation);
                 });
+
         System.out.println("Total static fields: " + count);
     }
 }
