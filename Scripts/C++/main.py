@@ -4,7 +4,7 @@ import static_method_visitor
 import static_field_visitor
 import data_member_visitor
 
-
+# Function to extract methods from a source file
 def method_extraction(source_file):
     # Create an index object
     index = clang.cindex.Index.create()
@@ -22,7 +22,7 @@ def method_extraction(source_file):
 
     return count
 
-
+# Function to extract fields from a source file
 def field_extraction(source_file):
     # Create an index object
     index = clang.cindex.Index.create()
@@ -38,7 +38,7 @@ def field_extraction(source_file):
             field_list.append(node)
     return count
 
-
+# Function to recursively extract private constructors from a node
 def extract_private_constructors(node):
     if node.kind == CursorKind.CLASS_DECL or CursorKind.CLASS_TEMPLATE:
         for child in node.get_children():
@@ -49,7 +49,7 @@ def extract_private_constructors(node):
     for child in node.get_children():
         extract_private_constructors(child)
 
-
+# Function to detect abstract methods in a source file
 def detect_abstract_methods(source_file):
     index = clang.cindex.Index.create()
     translation_unit = index.parse(source_file)
@@ -64,11 +64,11 @@ def detect_abstract_methods(source_file):
 
     return abstract_methods, count
 
-
+# Function to check if a cursor represents a pure virtual method
 def is_pure_virtual_method(cursor):
     return cursor.kind == clang.cindex.CursorKind.CXX_METHOD and cursor.is_pure_virtual_method()
 
-
+# Function to check if a cursor represents an interface class
 def is_interface_class(cursor):
     if cursor.kind != clang.cindex.CursorKind.CLASS_DECL:
         return False
@@ -83,7 +83,7 @@ def is_interface_class(cursor):
 
     return has_pure_virtual_method
 
-
+# Function to find interfaces in a source file
 def find_interfaces(source_file):
     index = clang.cindex.Index.create()
     translation_unit = index.parse(source_file)
@@ -97,7 +97,7 @@ def find_interfaces(source_file):
 
     return interfaces, count
 
-
+# Function to get overridden methods for a given cursor
 def get_overridden_methods(cursor):
     def traverse(node):
         if node.kind == clang.cindex.CursorKind.CXX_METHOD and node.is_virtual_method():
@@ -111,7 +111,7 @@ def get_overridden_methods(cursor):
     traverse(cursor)
     return override_list
 
-
+# Function to find classes that have fields of their own type
 def find_classes_with_own_type_fields(cursor, results):
     for node in cursor.walk_preorder():
         if node.kind == CursorKind.FIELD_DECL:
@@ -122,7 +122,7 @@ def find_classes_with_own_type_fields(cursor, results):
 
     return results
 
-
+# List of source files to process
 source_files = ["C:\\Users\\nilsd\\Desktop\\C++\\ClickHouse\\src\\Columns\\ColumnDecimal.cpp"]
 
 for source_file in source_files:
